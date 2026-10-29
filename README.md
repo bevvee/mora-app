@@ -1,136 +1,56 @@
-# rn-reusable-components
-Resusable components, Buttons, Cards, Images, List of objects,animation for react-native
-# Installation
-first install install react-native via expo by run the following code
-`Assuming that you have Node 12 LTS or greater installed, you can use npm 
-to install the Expo CLI command line utility:`
-```javascript
-npm install -g expo-cli
+# Welcome to your Expo app 👋
+
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+
+## Get started
+
+1. Install dependencies
+
+   ```bash
+   npm install
+   ```
+
+2. Start the app
+
+   ```bash
+   npx expo start
+   ```
+
+In the output, you'll find options to open the app in a
+
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+
+You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+
+## Get a fresh project
+
+When you're ready, run:
+
+```bash
+npm run reset-project
 ```
-Then run the following commands to create a new React Native project called "YourProjectName":
-```javascript
-expo init YourProjectName
-cd YourprojectName
-npm start # you can also use: expo start
-```
-[Read more about Installing React-native with expo here](https://reactnative.dev/docs/environment-setup)
 
-When your project is ready , create a directory that you can call ##components and a subdirectory
-that you can call ##buttons inside ##buttons 
-*create a file and name it #Button.js
-*copy and paste the following code inside the file is your main button component 
-```javascript
-import React from "react";
-import { TouchableOpacity, StyleSheet, Text } from "react-native";
+This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
 
-export function Button(props) {
-  //Let's define our props
-  const { title, color, ...otherProps } = props;
-  return (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        styles.boxWithShadow,
-        { backgroundColor: color },
-      ]}
-      {...otherProps}
-    >
-      <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
-  );
-}
+### Other setup steps
 
-Button.defaultProps = {
-  color: "blue",
-};
+- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
+- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
+- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
 
-const styles = StyleSheet.create({
-  button: {
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 15,
-    margin: 5,
-  },
-  boxWithShadow: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-    elevation: 4,
-  },
-});
+## Learn more
 
-```
-Now you can use your button any where in your app by importing it like this,
-```javascript
-import React from "react";
-import { StyleSheet, Alert, View } from "react-native";
-import { Button } from "./Button";
+To learn more about developing your project with Expo, look at the following resources:
 
-export default function HomeButton() {
-  return (
-    <View style={styles.container}>
-      <View>
-        <Button
-          onPress={() => Alert.alert("Press me")}
-          title="Press me"
-          color="skyblue"
-        />
-        <Button
-          onPress={() => Alert.alert("Click  me")}
-          title="Click me"
-          color="red"
-        />
-        <Button
-          onPress={() => Alert.alert("Smile to  me")}
-          title="Smile to me"
-          color="indigo"
-        />
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-        <Button
-          onPress={() => Alert.alert("Read  me")}
-          title="Read me"
-          color="seagreen"
-        />
-        <Button
-          onPress={() => Alert.alert("Follow  me")}
-          title="Follow me"
-          color="yellowgreen"
-        />
-        <Button
-          onPress={() => Alert.alert("Share  me")}
-          title="Share me"
-          color="mediumorchid"
-        />
-        <Button
-          onPress={() => Alert.alert("Guide  me")}
-          title="Guide me"
-          color="navy"
-        />
-      </View>
-    </View>
-  );
-}
+## Join the community
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+Join our community of developers creating universal apps.
 
-```
-Pay attention on where is located your ##Button.js when importing
-
-Happy Hacking!
-More reusable components coming!
-Stay tune!
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
