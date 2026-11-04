@@ -110,42 +110,222 @@ export default function HomeScreen() {
   }
 
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView style={styles.screen}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.brand}>MORA</Text>
+            <Text style={styles.brandCaption}>YOUR DAILY BEAUTY</Text>
+          </View>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+          <TouchableOpacity
+            style={styles.bagButton}
+            onPress={() => setActiveTab("Cart")}
+          >
+            <Text style={styles.bagIcon}>🛍</Text>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{cartCount}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        {activeTab === "Home" && (
+          <>
+            <View style={styles.searchBox}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search products..."
+                placeholderTextColor="#988278"
+                value={search}
+                onChangeText={setSearch}
+              />
+            </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.categories}
+            >
+              {categories.map((item) => (
+                <TouchableOpacity
+                  key={item}
+                  onPress={() => setCategory(item)}
+                  style={[
+                    styles.category,
+                    category === item && styles.categoryActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      category === item && styles.categoryTextActive,
+                    ]}
+                  >
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Our products</Text>
+              <Text style={styles.productCount}>
+                {filteredProducts.length} products
+              </Text>
+            </View>
+
+            <View style={styles.productGrid}>
+              {filteredProducts.map((product) => (
+                <View key={product.id} style={styles.productCard}>
+                  <View
+                    style={[
+                      styles.productImageBox,
+                      { backgroundColor: product.color },
+                    ]}
+                  >
+                    <Image
+                      source={{ uri: product.image }}
+                      style={styles.productImage}
+                    />
+                    <TouchableOpacity
+                      accessibilityLabel={`Add ${product.name} to cart`}
+                      style={styles.addButton}
+                      onPress={() => addToCart(product)}
+                    >
+                      <Text style={styles.addButtonText}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <Text style={styles.productCategory}>{product.category}</Text>
+                  <Text style={styles.productName}>{product.name}</Text>
+                  <Text style={styles.productPrice}>
+                    {product.price.toFixed(2)} MAD
+                  </Text>
+                </View>
+              ))}
+            </View>
+
+            {filteredProducts.length === 0 && (
+              <Text style={styles.emptyText}>No products found.</Text>
+            )}
+          </>
+        )}
+
+        {activeTab === "Cart" && (
+          <>
+            <Text style={styles.pageTitle}>Your cart</Text>
+
+            {cart.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyTitle}>Your cart is empty</Text>
+                <TouchableOpacity
+                  style={styles.primaryButton}
+                  onPress={() => setActiveTab("Home")}
+                >
+                  <Text style={styles.primaryButtonText}>Explore products</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <>
+                {cart.map((item) => (
+                  <View key={item.id} style={styles.cartRow}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={styles.cartImage}
+                    />
+
+                    <View style={styles.cartDetails}>
+                      <Text style={styles.productName}>{item.name}</Text>
+                      <Text style={styles.productPrice}>
+                        {(item.price * item.quantity).toFixed(2)} MAD
+                      </Text>
+                    </View>
+
+                    <View style={styles.quantityControl}>
+                      <TouchableOpacity
+                        style={styles.quantityButton}
+                        onPress={() => changeQuantity(item.id, 1)}
+                      >
+                        <Text style={styles.quantitySymbol}>+</Text>
+                      </TouchableOpacity>
+
+                      <Text style={styles.quantity}>{item.quantity}</Text>
+
+                      <TouchableOpacity
+                        style={styles.quantityButton}
+                        onPress={() => changeQuantity(item.id, -1)}
+                      >
+                        <Text style={styles.quantitySymbol}>−</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+
+                <View style={styles.totalRow}>
+                  <Text style={styles.totalLabel}>Total</Text>
+                  <Text style={styles.totalPrice}>{total.toFixed(2)} MAD</Text>
+                </View>
+              </>
+            )}
+          </>
+        )}
+
+        {activeTab === "Profile" && (
+          <>
+            <Text style={styles.pageTitle}>Your profile</Text>
+            <View style={styles.profileCard}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>♙</Text>
+              </View>
+              <Text style={styles.emptyTitle}>Welcome to MORA</Text>
+              <Text style={styles.profileDescription}>
+                Discover your daily beauty essentials.
+              </Text>
+              <View style={styles.guestPill}>
+                <Text style={styles.guestText}>Guest</Text>
+              </View>
+            </View>
+          </>
+        )}
+      </ScrollView>
+
+      <View style={styles.tabBar}>
+        {(["Home", "Cart", "Profile"] as const).map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={styles.tab}
+            onPress={() => setActiveTab(tab)}
+          >
+            <View
+              style={[
+                styles.tabIconBox,
+                activeTab === tab && styles.tabIconBoxActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tabIcon,
+                  activeTab === tab && styles.tabIconActive,
+                ]}
+              >
+                {tabIcons[tab]}
+              </Text>
+            </View>
+            <Text
+              style={[
+                styles.tabLabel,
+                activeTab === tab && styles.tabLabelActive,
+              ]}
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -224,13 +404,21 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#D6BDA7",
   },
-  heroImage: {
-    ...StyleSheet.absoluteFillObject,
+    heroImage: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     width: "100%",
     height: "100%",
   },
   heroShade: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     backgroundColor: "rgba(45, 29, 20, 0.36)",
   },
   heroContent: { flex: 1, padding: 25, justifyContent: "center" },
