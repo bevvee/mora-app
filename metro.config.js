@@ -1,10 +1,4 @@
-const { getDefaultConfig } = require('expo/metro-config');
-const { withUniwindConfig } = require('uniwind/metro');
+const { getDefaultConfig } = require("expo/metro-config");
 
-const config = getDefaultConfig(__dirname);
-
-module.exports = withUniwindConfig(config, {
-  cssEntryFile: './global.css',
-  dtsFile: './uniwind-types.d.ts',
-  extraThemes: ['dark'],
-});
+// Shop screens use React Native StyleSheet; keep Metro's standard cross-platform resolver.
+module.exports = getDefaultConfig(__dirname);
