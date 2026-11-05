@@ -1,35 +1,31 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { DefaultTheme, Stack, ThemeProvider } from "expo-router";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthProvider } from "../state/auth-provider";
+import { StoreProvider } from "../state/store-provider";
+import { colors } from "../components/shop/ui";
 
-import { AnimatedSplashOverlay } from '../components/animated-icon';
-import AppTabs from './../components/app-tabs';
-
-import { GluestackUIProvider } from './../../components/ui/gluestack-ui-provider';
-import { SafeAreaListener } from 'react-native-safe-area-context';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Uniwind } from 'uniwind';
-
-SplashScreen.preventAutoHideAsync();
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function RootLayout() {
   return (
-    
-    <SafeAreaListener
-      onChange={({ insets }) => {
-        Uniwind.updateInsets(insets);
-      }}
-    >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <GluestackUIProvider mode="dark">
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
-        </GluestackUIProvider>
-      </GestureHandlerRootView>
-    </SafeAreaListener>
-  
+    <SafeAreaProvider>
+      <ThemeProvider
+        value={{
+          ...DefaultTheme,
+          colors: {
+            ...DefaultTheme.colors,
+            background: colors.background,
+            card: colors.background,
+            text: colors.ink,
+            primary: colors.accent,
+            border: colors.border,
+          },
+        }}
+      >
+        <StoreProvider>
+          <AuthProvider>
+            <Stack screenOptions={{ headerShown: false }} />
+          </AuthProvider>
+        </StoreProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
