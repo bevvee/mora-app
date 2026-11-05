@@ -56,7 +56,10 @@ export default function CartScreen() {
                   })
                 }
               />
-              <Text style={ui.body}>{money(product.price)} each</Text>
+              <Text style={ui.body}>
+                {money(product.price)} each
+                {product.demoPrice ? " · demo price" : ""}
+              </Text>
               <View style={ui.row}>
                 <IconButton
                   icon={Minus}

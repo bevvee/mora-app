@@ -40,7 +40,7 @@ export function IconButton({
               size={22}
               strokeWidth={1.8}
               color={colors.ink}
-              accessible={false}
+              aria-hidden={true}
             />
           </View>
           {!!badge && (

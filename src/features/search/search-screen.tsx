@@ -1,3 +1,4 @@
+import { LegendList } from "@legendapp/list";
 import { router } from "expo-router";
 import ChevronRight from "lucide-react-native/icons/chevron-right";
 import Droplets from "lucide-react-native/icons/droplets";
@@ -6,7 +7,6 @@ import Palette from "lucide-react-native/icons/palette";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useMemo, useState } from "react";
 import {
-  FlatList,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -65,15 +65,19 @@ export default function SearchScreen() {
           )}
         </View>
         {searching ? (
-          <FlatList
+          <LegendList
+            style={{ flex: 1 }}
             key="search-results"
+            recycleItems
+            estimatedItemSize={320}
+            maintainVisibleContentPosition={false}
             data={results}
             numColumns={2}
             keyExtractor={(product) => product.id}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
             contentContainerStyle={ui.content}
-            columnWrapperStyle={{ gap: 16 }}
+            columnWrapperStyle={{ gap: 14 }}
             renderItem={({ item }) => <ProductCard product={item} />}
             ListEmptyComponent={
               <Empty
@@ -83,8 +87,11 @@ export default function SearchScreen() {
             }
           />
         ) : (
-          <FlatList
+          <LegendList
+            style={{ flex: 1 }}
             key="categories"
+            recycleItems
+            estimatedItemSize={160}
             data={categories}
             keyExtractor={(category) => category.name}
             keyboardShouldPersistTaps="handled"
@@ -127,12 +134,12 @@ export default function SearchScreen() {
                       size={30}
                       strokeWidth={1.5}
                       color={colors.accent}
-                      accessible={false}
+                      aria-hidden={true}
                     />
                     <ChevronRight
                       size={21}
                       color={colors.muted}
-                      accessible={false}
+                      aria-hidden={true}
                     />
                   </View>
                   <Text style={ui.heading}>{item.name}</Text>

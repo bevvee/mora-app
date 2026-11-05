@@ -64,6 +64,7 @@ export default function ProductsScreen() {
           <Text style={ui.heading}>{product.name}</Text>
           <Text style={ui.body}>
             {product.category} · {money(product.price)}
+            {product.demoPrice ? " · demo price" : ""}
           </Text>
           <Text style={ui.bold}>
             {product.hidden ? "Hidden from shop" : "Visible in shop"}

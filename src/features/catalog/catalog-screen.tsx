@@ -1,18 +1,22 @@
-import ArrowUpRight from "lucide-react-native/icons/arrow-up-right";
+import { LegendList } from "@legendapp/list";
 import ShoppingBag from "lucide-react-native/icons/shopping-bag";
-import { AppHeader, IconButton } from "../../components/shop/app-header";
+import Sparkles from "lucide-react-native/icons/sparkles";
 import { useMemo, useState } from "react";
-import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import { AppHeader, IconButton } from "../../components/shop/app-header";
+import { Button, colors, Empty, ui } from "../../components/shop/ui";
+import { cartDetails } from "../../domain/store";
+import { productPresentation } from "../../domain/product-presentation";
 import { useStore } from "../../state/store-provider";
-import { cartDetails, money } from "../../domain/store";
-import { Button, Empty, ProductImage, ui } from "../../components/shop/ui";
+import { ProductCard } from "../search/product-card";
+import { GlowHero } from "./glow-hero";
 
 export default function CatalogScreen() {
   const { store } = useStore();
-  const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [heroVisible, setHeroVisible] = useState(true);
   const visible = useMemo(
     () => store.products.filter((product) => !product.hidden),
     [store.products],
@@ -21,17 +25,26 @@ export default function CatalogScreen() {
     "All",
     ...new Set(visible.map((product) => product.category)),
   ];
+  const selected = categories.includes(category) ? category : "All";
+  const products = visible.filter(
+    (product) => selected === "All" || selected === product.category,
+  );
+  const featured = visible.find((product) => !!productPresentation(product));
+  const companion =
+    visible.find(
+      (product) =>
+        product.id !== featured?.id &&
+        productPresentation(product)?.kind === "cloud-cream",
+    ) ??
+    visible.find(
+      (product) =>
+        product.id !== featured?.id && !!productPresentation(product),
+    );
   const cartCount = cartDetails(store).reduce(
     (sum, line) => sum + line.quantity,
     0,
   );
-  const products = visible.filter(
-    (product) =>
-      (category === "All" || category === product.category) &&
-      `${product.name} ${product.category}`
-        .toLowerCase()
-        .includes(search.trim().toLowerCase()),
-  );
+
   return (
     <SafeAreaView edges={["top", "left", "right"]} style={ui.fill}>
       <AppHeader
@@ -47,38 +60,29 @@ export default function CatalogScreen() {
           />
         }
       />
-      <FlatList
+      <LegendList
+        style={{ flex: 1 }}
         data={products}
         numColumns={2}
+        recycleItems
+        estimatedItemSize={320}
+        maintainVisibleContentPosition={false}
         keyExtractor={(product) => product.id}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={ui.content}
-        columnWrapperStyle={{ gap: 16 }}
+        columnWrapperStyle={{ gap: 14 }}
+        onScroll={(event) =>
+          setHeroVisible(event.nativeEvent.contentOffset.y < 700)
+        }
+        scrollEventThrottle={150}
         ListHeaderComponent={
-          <View style={{ gap: 24, marginBottom: 8 }}>
-            <View
-              style={[
-                ui.card,
-                { backgroundColor: "#EDE0D2", paddingVertical: 32 },
-              ]}
-            >
-              <Text style={ui.eyebrow}>THE GLOW EDIT</Text>
-              <Text style={[ui.title, { fontSize: 36 }]}>
-                A little care.{"\n"}A lot of glow.
-              </Text>
-              <Text style={ui.body}>
-                Beauty essentials for your everyday ritual.
-              </Text>
-              <Button
-                icon={ArrowUpRight}
-                title="Explore skincare"
-                onPress={() => {
-                  setSearch("");
-                  setCategory("Skincare");
-                }}
-              />
-            </View>
-
+          <View style={{ gap: 24, marginBottom: 20 }}>
+            <GlowHero
+              product={featured}
+              companion={companion}
+              visible={heroVisible}
+              onExplore={() => router.push("/products")}
+            />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -88,46 +92,57 @@ export default function CatalogScreen() {
                 <Button
                   key={item}
                   title={item}
-                  secondary={category !== item}
+                  secondary={selected !== item}
+                  selected={selected === item}
                   onPress={() => setCategory(item)}
                 />
               ))}
             </ScrollView>
             <View style={ui.row}>
-              <Text style={ui.heading}>Your new favorites</Text>
-              <Text style={ui.body}>{products.length} essentials</Text>
+              <View style={{ gap: 5 }}>
+                <Text style={ui.eyebrow}>YOUR MORA COLLECTION</Text>
+                <Text style={ui.heading}>Your new favorites</Text>
+              </View>
+              <Text
+                accessibilityLiveRegion="polite"
+                style={[ui.body, { fontSize: 12 }]}
+              >
+                {products.length}{" "}
+                {products.length === 1 ? "essential" : "essentials"}
+              </Text>
             </View>
           </View>
         }
-        renderItem={({ item }) => (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`View ${item.name}`}
-            onPress={() =>
-              router.push({
-                pathname: "/product/[id]",
-                params: { id: item.id },
-              })
-            }
-            style={{ flex: 1, maxWidth: "48%", gap: 8, marginBottom: 20 }}
-          >
-            <ProductImage key={item.image} uri={item.image} />
-            <Text style={ui.eyebrow}>{item.category.toUpperCase()}</Text>
-            <Text style={ui.bold}>{item.name}</Text>
-            <Text style={ui.body}>{money(item.price)}</Text>
-          </Pressable>
-        )}
+        renderItem={({ item }) => <ProductCard product={item} />}
         ListEmptyComponent={
           <Empty
-            title="No essentials found"
-            message="Try another search or category."
+            title="No essentials here yet"
+            message="Try another category to find your next favorite."
           />
         }
         ListFooterComponent={
-          <View style={ui.card}>
-            <Text style={ui.heading}>Beauty in the little things</Text>
-            <Text style={ui.body}>
-              Make a little space for yourself, every day.
+          <View
+            style={[
+              ui.card,
+              {
+                backgroundColor: colors.soft,
+                alignItems: "center",
+                padding: 28,
+                marginTop: 8,
+              },
+            ]}
+          >
+            <Sparkles
+              size={23}
+              strokeWidth={1.3}
+              color={colors.accent}
+              aria-hidden={true}
+            />
+            <Text style={[ui.heading, { textAlign: "center" }]}>
+              Beauty in the little things
+            </Text>
+            <Text style={[ui.body, { textAlign: "center" }]}>
+              No rush. No rules. Just a little space for you.
             </Text>
           </View>
         }

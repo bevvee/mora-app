@@ -102,7 +102,10 @@ export default function CheckoutScreen() {
                 <Text style={[ui.body, { flex: 1 }]}>
                   {quantity} × {product.name}
                 </Text>
-                <Text style={ui.bold}>{money(product.price * quantity)}</Text>
+                <Text style={ui.bold}>
+                  {money(product.price * quantity)}
+                  {product.demoPrice ? " · demo" : ""}
+                </Text>
               </View>
             ))}
             <Text style={ui.body}>Delivery: free for this local demo</Text>

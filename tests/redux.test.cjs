@@ -5,7 +5,12 @@ const Module = require("node:module");
 const path = require("node:path");
 const { test } = require("node:test");
 const ts = require("typescript");
-const { initialStore, updateStore } = require("../src/domain/store.ts");
+const {
+  initialStore: legacyInitialStore,
+  updateStore,
+} = require("../src/domain/store.ts");
+const { upgradeMoraCatalog } = require("../src/domain/mora-catalog.ts");
+const initialStore = () => upgradeMoraCatalog(legacyInitialStore());
 const { emptyAuthData } = require("../src/domain/local-auth.ts");
 
 // Metro resolves extensionless TS imports; Node's native TS loader does not.
@@ -14,7 +19,7 @@ const filename = require.resolve("../src/state/app-store.ts");
 const source = fs
   .readFileSync(filename, "utf8")
   .replace(
-    /from "\.\.\/domain\/(store|local-auth)"/g,
+    /from "\.\.\/domain\/(store|local-auth|mora-catalog)"/g,
     'from "../domain/$1.ts"',
   );
 const compiled = ts.transpileModule(source, {
@@ -566,4 +571,37 @@ test("Redux checkout persists immutable order snapshots after later catalog edit
   assert.equal(order.items[0].price, 189);
   const restarted = await boot(Object.fromEntries(result.values));
   assert.deepEqual(restarted.store.getState().shop.data.orders[0], order);
+});
+
+test("a legacy catalog upgrade is persisted once while order snapshots and accounts remain intact", async () => {
+  const legacy = legacyInitialStore();
+  const result = await boot({ [SHOP_STORAGE_KEY]: JSON.stringify(legacy) });
+  const shop = result.store.getState().shop.data;
+  assert.equal(shop.products.length, 15);
+  assert.equal(shop.products[0].name, "Dew Serum");
+  assert.deepEqual(shop.orders, legacy.orders);
+  assert.deepEqual(shop.customers, legacy.customers);
+  assert.equal(result.writes.length, 1);
+  const again = await boot({
+    [SHOP_STORAGE_KEY]: result.values.get(SHOP_STORAGE_KEY),
+  });
+  assert.equal(again.writes.length, 0);
+});
+
+test("a failed catalog upgrade leaves saved data untouched and hydration can retry", async () => {
+  const raw = JSON.stringify(legacyInitialStore());
+  const result = fixture({ [SHOP_STORAGE_KEY]: raw });
+  const save = result.storage.setItem;
+  result.storage.setItem = async () => {
+    throw new Error("Storage full");
+  };
+  await assert.rejects(
+    result.store.dispatch(hydrateShop()).unwrap(),
+    { message: "Storage full" },
+  );
+  assert.equal(result.store.getState().shop.data, null);
+  assert.equal(result.values.get(SHOP_STORAGE_KEY), raw);
+  result.storage.setItem = save;
+  await result.store.dispatch(hydrateShop()).unwrap();
+  assert.equal(result.store.getState().shop.data.products.length, 15);
 });

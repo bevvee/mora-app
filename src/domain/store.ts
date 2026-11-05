@@ -7,6 +7,7 @@ export type Product = {
   price: number;
   image: string;
   hidden: boolean;
+  demoPrice?: boolean;
 };
 export type Customer = {
   id: string;
@@ -36,6 +37,7 @@ export type Order = {
 };
 export type Store = {
   version: 1;
+  catalogRevision?: number;
   products: Product[];
   customers: Customer[];
   activeCustomerId: string;
@@ -148,7 +150,11 @@ export function validateProduct(product: Product): string | undefined {
     Math.abs(Math.round(product.price * 100) - product.price * 100) > 0.00001
   )
     return "Use at most two decimal places.";
-  if (!/^https?:\/\/\S+$/i.test(product.image))
+  const bundledImage =
+    /^mora-asset:(petal-toner|silk-cleanser|cloud-cream|dew-serum|sun-veil|velvet-lip|rose-tint|lash-muse|honey-gloss|skin-silk|vanille-douce|bois-de-soie|fleur-de-lune|eclat|rose-ambree)$/.test(
+      product.image,
+    );
+  if (!bundledImage && !/^https?:\/\/\S+$/i.test(product.image))
     return "Enter a valid http or https image URL.";
 }
 export function cartDetails(store: Store) {
@@ -322,6 +328,9 @@ export function parseStore(raw: string): Store {
   if (
     !record(value) ||
     value.version !== 1 ||
+    (value.catalogRevision !== undefined &&
+      (!Number.isSafeInteger(value.catalogRevision) ||
+        (value.catalogRevision as number) < 0)) ||
     !Array.isArray(value.products) ||
     !value.products.every(
       (p) =>
@@ -329,6 +338,7 @@ export function parseStore(raw: string): Store {
         strings(p, ["id", "name", "category", "description", "image"]) &&
         positive(p.price) &&
         typeof p.hidden === "boolean" &&
+        (p.demoPrice === undefined || typeof p.demoPrice === "boolean") &&
         (p.subcategory === undefined || typeof p.subcategory === "string"),
     ) ||
     !Array.isArray(value.customers) ||

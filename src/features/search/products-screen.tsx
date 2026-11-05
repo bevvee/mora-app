@@ -1,5 +1,6 @@
+import { LegendList } from "@legendapp/list";
 import { router, useLocalSearchParams } from "expo-router";
-import { FlatList, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppHeader } from "../../components/shop/app-header";
 import { Button, Empty, ui } from "../../components/shop/ui";
@@ -34,12 +35,16 @@ export default function ProductsScreen() {
         }
         back
       />
-      <FlatList
+      <LegendList
+        style={{ flex: 1 }}
+        recycleItems
+        estimatedItemSize={320}
+        maintainVisibleContentPosition={false}
         data={products}
         numColumns={2}
         keyExtractor={(product) => product.id}
         contentContainerStyle={ui.content}
-        columnWrapperStyle={{ gap: 16 }}
+        columnWrapperStyle={{ gap: 14 }}
         ListHeaderComponent={
           <Text style={ui.body}>
             {products.length} {products.length === 1 ? "product" : "products"}

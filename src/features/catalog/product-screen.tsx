@@ -5,11 +5,13 @@ import { Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useStore } from "../../state/store-provider";
 import { money } from "../../domain/store";
+import { productPresentation } from "../../domain/product-presentation";
+import { ProductGallery } from "../../components/shop/product-gallery";
+import { IconButton } from "../../components/shop/app-header";
 import {
   Button,
   Empty,
   errorMessage,
-  ProductImage,
   Screen,
   ui,
 } from "../../components/shop/ui";
@@ -46,30 +48,60 @@ export default function ProductScreen() {
     }
   }
   return (
-    <Screen title={product.name} caption={product.category.toUpperCase()} back>
-      <ProductImage key={product.image} uri={product.image} large />
+    <Screen
+      title={product.name}
+      caption={product.category.toUpperCase()}
+      back
+      footer={
+        <View style={{ gap: 8 }}>
+          {product.demoPrice && (
+            <Text style={[ui.eyebrow, { fontSize: 10 }]}>
+              DEMO PRICE · PREVIEW ONLY
+            </Text>
+          )}
+          {!!message && (
+            <Text
+              accessibilityLiveRegion="polite"
+              style={[ui.body, { fontSize: 13 }]}
+            >
+              {message}
+            </Text>
+          )}
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+            <View style={{ flex: 1 }}>
+              <Button
+                icon={Plus}
+                title={
+                  busy ? "Adding…" : `Add to bag · ${money(product.price)}`
+                }
+                disabled={busy}
+                onPress={() => {
+                  void add();
+                }}
+              />
+            </View>
+            <IconButton
+              icon={ShoppingBag}
+              label="View bag"
+              onPress={() => router.push("/cart")}
+            />
+          </View>
+        </View>
+      }
+    >
+      <ProductGallery key={product.id} product={product} />
+      {productPresentation(product) && (
+        <Text style={[ui.heading, { fontSize: 24 }]}>
+          {productPresentation(product)?.note}
+        </Text>
+      )}
       <View style={ui.row}>
         <Text style={ui.heading}>{money(product.price)}</Text>
-        <Text style={ui.body}>Your everyday ritual</Text>
+        <Text style={ui.body}>
+          {productPresentation(product)?.volume ?? "Your everyday ritual"}
+        </Text>
       </View>
       <Text style={ui.body}>{product.description}</Text>
-      <Button
-        icon={Plus}
-        title={busy ? "Adding…" : "Add to bag"}
-        disabled={busy}
-        onPress={() => {
-          void add();
-        }}
-      />
-      <Text accessibilityLiveRegion="polite" style={ui.body}>
-        {message}
-      </Text>
-      <Button
-        icon={ShoppingBag}
-        title="View bag"
-        secondary
-        onPress={() => router.push("/cart")}
-      />
     </Screen>
   );
 }

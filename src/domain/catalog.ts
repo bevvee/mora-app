@@ -11,7 +11,7 @@ export const categoryDefinitions: CategoryDefinition[] = [
     name: "Skincare",
     description:
       "Care for your skin, from the first cleanse to the final glow.",
-    subcategories: ["Cleansers", "Serums", "Moisturizers", "Sun care"],
+    subcategories: ["Cleansers", "Toners", "Serums", "Moisturizers", "Sun care"],
   },
   {
     name: "Makeup",
@@ -77,9 +77,10 @@ export function getCategories(products: Product[]): CategoryDefinition[] {
 }
 
 export function searchProducts(products: Product[], query: string): Product[] {
-  const term = query.trim().toLowerCase();
+  const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const term = normalize(query.trim());
   return products.filter(
-    (product) => !product.hidden && product.name.toLowerCase().includes(term),
+    (product) => !product.hidden && normalize([product.name, product.category, product.subcategory ?? "", product.description].join(" ")).includes(term),
   );
 }
 

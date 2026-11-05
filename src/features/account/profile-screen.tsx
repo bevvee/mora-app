@@ -51,14 +51,14 @@ function MenuItem({
           size={21}
           color={colors.accent}
           strokeWidth={1.8}
-          accessible={false}
+          aria-hidden={true}
         />
       </View>
       <View style={{ flex: 1, gap: 3 }}>
         <Text style={ui.bold}>{title}</Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
-      <ChevronRight size={18} color={colors.muted} accessible={false} />
+      <ChevronRight size={18} color={colors.muted} aria-hidden={true} />
     </Pressable>
   );
 }

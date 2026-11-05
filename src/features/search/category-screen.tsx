@@ -1,7 +1,8 @@
+import { LegendList } from "@legendapp/list";
 import { router, useLocalSearchParams } from "expo-router";
 import ArrowUpRight from "lucide-react-native/icons/arrow-up-right";
 import ChevronRight from "lucide-react-native/icons/chevron-right";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppHeader } from "../../components/shop/app-header";
 import { Button, colors, Empty, ui } from "../../components/shop/ui";
@@ -30,7 +31,10 @@ export default function CategoryScreen() {
         caption="EXPLORE YOUR RITUAL"
         back
       />
-      <FlatList
+      <LegendList
+        style={{ flex: 1 }}
+        recycleItems
+        estimatedItemSize={110}
         data={subcategories}
         keyExtractor={(subcategory) => subcategory}
         contentContainerStyle={ui.content}
@@ -75,7 +79,7 @@ export default function CategoryScreen() {
                 <ChevronRight
                   size={22}
                   color={colors.muted}
-                  accessible={false}
+                  aria-hidden={true}
                 />
               </View>
             </Pressable>

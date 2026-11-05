@@ -1,3 +1,4 @@
+import { productImageUri } from "../three/reference-assets";
 import { useState, type ReactNode } from "react";
 import {
   Image,
@@ -135,7 +136,7 @@ export function Button({
       ]}
     >
       {Icon && (
-        <Icon size={19} strokeWidth={1.8} color={color} accessible={false} />
+        <Icon size={19} strokeWidth={1.8} color={color} aria-hidden={true} />
       )}
       <Text style={[ui.buttonText, { color }]}>{title}</Text>
     </Pressable>
@@ -163,11 +164,13 @@ export function Screen({
   caption,
   children,
   back = false,
+  footer,
 }: {
   title: string;
   caption?: string;
   children: ReactNode;
   back?: boolean;
+  footer?: ReactNode;
 }) {
   return (
     <SafeAreaView style={ui.fill} edges={["top", "left", "right"]}>
@@ -183,6 +186,28 @@ export function Screen({
           {children}
         </ScrollView>
       </KeyboardAvoidingView>
+      {footer && (
+        <SafeAreaView
+          edges={["bottom"]}
+          style={{
+            backgroundColor: colors.background,
+            borderTopWidth: 1,
+            borderTopColor: colors.border,
+          }}
+        >
+          <View
+            style={{
+              width: "100%",
+              maxWidth: 820,
+              alignSelf: "center",
+              paddingHorizontal: 22,
+              paddingVertical: 12,
+            }}
+          >
+            {footer}
+          </View>
+        </SafeAreaView>
+      )}
     </SafeAreaView>
   );
 }
@@ -197,9 +222,27 @@ export function Empty({ title, message }: { title: string; message: string }) {
 export function ProductImage({
   uri,
   large = false,
+  label = "Product photo",
 }: {
   uri: string;
   large?: boolean;
+  label?: string;
+}) {
+  // Recycled cards may receive another URL without unmounting. Reset failed-image
+  // state with the source so one broken photo cannot hide the next product.
+  const resolved = productImageUri(uri);
+  return (
+    <ProductPhoto key={resolved} uri={resolved} large={large} label={label} />
+  );
+}
+function ProductPhoto({
+  uri,
+  large,
+  label,
+}: {
+  uri: string;
+  large: boolean;
+  label: string;
 }) {
   const [failed, setFailed] = useState(false);
   return failed || !uri ? (
@@ -218,7 +261,7 @@ export function ProductImage({
     </View>
   ) : (
     <Image
-      accessibilityLabel="Product photo"
+      accessibilityLabel={label}
       source={{ uri }}
       style={[ui.image, large && { aspectRatio: 1.15 }]}
       onError={() => setFailed(true)}

@@ -1,0 +1,92 @@
+{
+  "dew-serum": {
+    "name": "Dew Serum",
+    "category": "Skincare",
+    "volume": "30 ml",
+    "asset": "dew-serum"
+  },
+  "velvet-lip": {
+    "name": "Velvet Lip · Rose Nude",
+    "category": "Makeup",
+    "volume": "3.5 g",
+    "asset": "velvet-lip"
+  },
+  "cloud-cream": {
+    "name": "Cloud Cream",
+    "category": "Skincare",
+    "volume": "50 ml",
+    "asset": "cloud-cream"
+  },
+  "vanille-douce": {
+    "name": "Vanille Douce",
+    "category": "Fragrance",
+    "volume": "50 ml",
+    "asset": "vanille-douce"
+  },
+  "petal-toner": {
+    "name": "Petal Toner",
+    "category": "Skincare",
+    "volume": "120 ml",
+    "asset": "petal-toner"
+  },
+  "silk-cleanser": {
+    "name": "Silk Cleanser",
+    "category": "Skincare",
+    "volume": "150 ml",
+    "asset": "silk-cleanser"
+  },
+  "sun-veil": {
+    "name": "Sun Veil",
+    "category": "Skincare",
+    "volume": "50 ml",
+    "asset": "sun-veil"
+  },
+  "rose-tint": {
+    "name": "Rose Tint",
+    "category": "Makeup",
+    "volume": "10 ml",
+    "asset": "rose-tint"
+  },
+  "lash-muse": {
+    "name": "Lash Muse",
+    "category": "Makeup",
+    "volume": "8 ml",
+    "asset": "lash-muse"
+  },
+  "honey-gloss": {
+    "name": "Honey Gloss",
+    "category": "Makeup",
+    "volume": "5 ml",
+    "asset": "honey-gloss"
+  },
+  "skin-silk": {
+    "name": "Skin Silk",
+    "category": "Makeup",
+    "volume": "30 ml",
+    "asset": "skin-silk"
+  },
+  "bois-de-soie": {
+    "name": "Bois de Soie",
+    "category": "Fragrance",
+    "volume": "75 ml",
+    "asset": "bois-de-soie"
+  },
+  "fleur-de-lune": {
+    "name": "Fleur de Lune",
+    "category": "Fragrance",
+    "volume": "50 ml",
+    "asset": "fleur-de-lune"
+  },
+  "eclat": {
+    "name": "Éclat",
+    "category": "Fragrance",
+    "volume": "50 ml",
+    "asset": "eclat"
+  },
+  "rose-ambree": {
+    "name": "Rose Ambrée",
+    "category": "Fragrance",
+    "volume": "50 ml",
+    "asset": "rose-ambree"
+  }
+}

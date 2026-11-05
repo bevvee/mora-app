@@ -110,6 +110,15 @@ function Editor({
         keyboardType="decimal-pad"
         onChangeText={setPrice}
       />
+      <View style={ui.row}>
+        <Text style={ui.bold}>Demo price · preview only</Text>
+        <Switch
+          accessibilityLabel="Mark product price as a demo"
+          value={draft.demoPrice === true}
+          onValueChange={(demoPrice) => setDraft({ ...draft, demoPrice })}
+          disabled={busy}
+        />
+      </View>
       <Field
         label="Description"
         multiline

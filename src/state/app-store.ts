@@ -1,3 +1,4 @@
+import { upgradeMoraCatalog } from "../domain/mora-catalog";
 import {
   combineReducers,
   configureStore,
@@ -197,10 +198,12 @@ export const hydrateShop = createAsyncThunk<void, void, ThunkConfig>(
   async (_, { dispatch, extra }) =>
     extra.run(async () => {
       const raw = await extra.storage.getItem(SHOP_STORAGE_KEY);
-      // Publish before releasing the queue so the next transaction reads this state.
-      dispatch(
-        shopSlice.actions.hydrated(raw ? parseStore(raw) : initialStore()),
-      );
+      const previous = raw ? parseStore(raw) : initialStore();
+      const upgraded = upgradeMoraCatalog(previous);
+      if (raw && upgraded !== previous)
+        await extra.storage.setItem(SHOP_STORAGE_KEY, JSON.stringify(upgraded));
+      // Publish only after the migration is durable, keeping queued writes safe.
+      dispatch(shopSlice.actions.hydrated(upgraded));
     }),
   {
     condition: (_, { getState }) =>

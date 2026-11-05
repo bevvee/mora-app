@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import House from "lucide-react-native/icons/house";
 import Search from "lucide-react-native/icons/search";
 import ShoppingBag from "lucide-react-native/icons/shopping-bag";
@@ -8,6 +9,7 @@ import { cartDetails } from "../../domain/store";
 import { colors } from "../shop/theme";
 
 export default function ShopTabs() {
+  const insets = useSafeAreaInsets();
   const { store } = useStore();
   const count = cartDetails(store).reduce(
     (sum, line) => sum + line.quantity,
@@ -22,6 +24,9 @@ export default function ShopTabs() {
         tabBarStyle: {
           backgroundColor: colors.background,
           borderTopColor: colors.border,
+          height: 68 + insets.bottom,
+          paddingTop: 8,
+          paddingBottom: Math.max(insets.bottom, 8),
         },
         tabBarLabelStyle: { fontSize: 12 },
         tabBarBadgeStyle: {
@@ -52,7 +57,7 @@ export default function ShopTabs() {
               color={color}
               size={size}
               strokeWidth={focused ? 2.2 : 1.6}
-              accessible={false}
+              aria-hidden={true}
             />
           ),
         }}
